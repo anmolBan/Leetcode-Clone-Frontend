@@ -1,18 +1,18 @@
 "use client"
 
-import LandingPage from "@/components/LandingPage";
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
-import { signOut, useSession } from "next-auth/react";
-import Image from "next/image";
+import { Card } from "@/components/Card";
+import { SigninSignout } from "@/components/SigninSignout";
+import { Topbar } from "@/components/Topbar";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
   const session = useSession();
   return (
-    <div>
-      <LandingPage/>
-
-      {session.data?.user && <button onClick={() => signOut()}>Logout</button>}
+    <div className=" flex justify-center w-full ">
+      <div className="w-7/12">
+        <Topbar/>
+        <Card>Hi there</Card>
+      </div>
     </div>
   );
 }
