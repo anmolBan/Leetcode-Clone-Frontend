@@ -8,9 +8,9 @@ import { useSession } from "next-auth/react";
 export default function Home() {
   const session = useSession();
   return (
-    <div className=" flex justify-center w-full ">
-      <div className="w-7/12">
-        <Topbar/>
+    <div className="flex flex-col items-center h-screen bg-gray-100">
+      <Topbar/>
+      <div className="mt-2 w-8/12">
         <Card>Hi there</Card>
       </div>
     </div>

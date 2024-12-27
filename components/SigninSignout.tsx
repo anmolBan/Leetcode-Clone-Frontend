@@ -1,5 +1,3 @@
-import { authOptions } from "@/lib/auth"
-import { getServerSession } from "next-auth"
 import { signIn, signOut, useSession } from "next-auth/react";
 
 export const SigninSignout = () => {

@@ -14,8 +14,73 @@ datasource db {
 }
 
 model User {
-  id        String         @id @default(uuid())
-  email     String         @unique
-  name      String?
-  password  String?
+  id             String     @id @default(uuid())
+  username       String?     @unique
+  email          String     @unique
+  password       String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  submissions    Submission[]
+}
+
+model Problem {
+  id             String     @id @default(uuid())
+  title          String     @unique
+  description    String
+  difficulty     Difficulty
+  tags           Tag[]
+  testCases      TestCase[]
+  solutions      Submission[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model Submission {
+  id             String     @id @default(uuid())
+  code           String
+  language       Language
+  user           User       @relation(fields: [userId], references: [id])
+  userId         String
+  problem        Problem    @relation(fields: [problemId], references: [id])
+  problemId      String
+  status         SubmissionStatus
+  createdAt      DateTime   @default(now())
+}
+
+model TestCase {
+  id             String     @id @default(uuid())
+  input          String
+  output         String
+  problem        Problem    @relation(fields: [problemId], references: [id])
+  problemId      String
+}
+
+model Tag {
+    id          String    @id @default(uuid())
+    name        String    @unique
+    problemId   String
+    problem     Problem   @relation(fields: [problemId], references: [id])
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum Language {
+  JAVASCRIPT
+  PYTHON
+  JAVA
+  CPLUSPLUS
+  CSHARP
+  RUBY
+}
+
+enum SubmissionStatus {
+  ACCEPTED
+  WRONG_ANSWER
+  TIME_LIMIT_EXCEEDED
+  RUNTIME_ERROR
+  COMPILATION_ERROR
 }

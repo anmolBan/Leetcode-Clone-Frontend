@@ -7,7 +7,7 @@ export const LeaderBoard = ({leaderboard}: {
 }) => {
     return (
         <div>
-            Leader Board
+            Leaderboard
         </div>
     )
 }
