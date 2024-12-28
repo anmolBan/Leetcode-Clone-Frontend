@@ -7,7 +7,9 @@ export const Topbar = () => {
     return (
         <div className="flex justify-center bg-gray-100">
             <div className="w-8/12 bg-black min-h-56 p-5">
-                <img src="/logo.png" className="max-w-56"/>
+                <Link href="/">
+                    <img src="/logo.png" className="max-w-56"/>
+                </Link>
                 <Navbar/>
             </div>
         </div>
