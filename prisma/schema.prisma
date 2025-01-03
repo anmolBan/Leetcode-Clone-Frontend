@@ -23,12 +23,15 @@ model User {
   updatedAt      DateTime   @updatedAt
   points         Int        @default(0)
   submissions    Submission[]
+  problems       Problem[]
 }
 
 model Problem {
   id             String     @id @default(uuid())
   title          String     @unique
   description    String
+  user           User       @relation(fields: [userId], references: [id])
+  userId         String
   difficulty     Difficulty
   tags           Tag[]
   testCases      TestCase[]
