@@ -31,7 +31,7 @@ const navbarItems = [
         route: "/leaderboard"
     }, {
         title: "My profile",
-        route: "/profile"
+        route: "/profile/"
     }
 ]
 
@@ -54,7 +54,7 @@ function NavbarItem({title, route} : {
     if(title === "My profile"){
         if(session.data?.user){
             return (
-                <Link href={route}>
+                <Link href={route + session.data.user.id}>
                     <div className="max-10 text-gray-500 cursor-pointer hover:text-white text-base">
                         {title}
                     </div>

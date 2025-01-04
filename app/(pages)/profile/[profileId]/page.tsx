@@ -1,6 +1,14 @@
 import { Topbar } from "@/components/Topbar";
 
-export default async function Profile(){
+export default async function Profile({
+    params: {
+        profileId
+    }
+}: {
+    params: {
+        profileId: string
+    }
+}){
     return (
         <div>
             <Topbar/>
