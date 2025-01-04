@@ -19,30 +19,26 @@ export const authOptions = {
     CredentialsProvider({
         name: 'Credentials',
         credentials: {
-          email: { label: "Email", type: "text", placeholder: "xyz@gmail.com" },
+          emailOrUsername: { label: "Email/Username", type: "text", placeholder: "xyz@gmail.com" },
           password: { label: "Password", type: "password" }
         },
         async authorize(credentials, req) {
             try{
-                const user = await prisma.user.findUnique({
+                const user = await prisma.user.findFirst({
                     where: {
-                        email: credentials?.email
+                        OR : [
+                            {email: credentials?.emailOrUsername || ""},
+                            {username: credentials?.emailOrUsername || ""}
+                        ]
                     }
                 });
-                const hashedPassword = await bcrypt.hash(credentials?.password || "", 10);
                 if(!user){
-                    const newUser = await prisma.user.create({
-                        data: {
-                            email: credentials?.email || "",
-                            password: hashedPassword
-                        }
-                    });
-                    return newUser;
+                    throw new Error("Invalid Credentials");
                 }
                 else{
                     const isPasswordValid = await bcrypt.compare(credentials?.password || "", user.password || "");
                     if(!isPasswordValid){
-                        throw new Error("Invalid Credentials");
+                        throw new Error("Invalid Password");
                     }
                     return user;
                 }
@@ -70,7 +66,9 @@ export const authOptions = {
             if(!existingUser){
                 const newUser = await prisma.user.create({
                     data: {
-                        email: user.email
+                        email: user.email,
+                        name: user.name,
+                        username: user.email
                     }
                 });
                 user.id = newUser.id

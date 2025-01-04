@@ -13,7 +13,7 @@ export async function GET(){
     //         status: 403
     //     });
     // }
-    console.log("Anmol");
+    // console.log("Anmol");
     try{
         const res = await prisma.user.findMany({
             orderBy: {

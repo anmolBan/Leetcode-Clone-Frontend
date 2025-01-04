@@ -3,6 +3,7 @@
 import { Topbar } from "@/components/Topbar";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Link from "next/link";
 
 interface LeaderboardItem {
     id: string,
@@ -11,6 +12,7 @@ interface LeaderboardItem {
 }
 
 let i = 0;
+let i2 = 0;
 
 export default function Leaderboard() {
 
@@ -36,13 +38,7 @@ export default function Leaderboard() {
                         Leaderboard
                     </div>
                     <div className="pl-5">
-                        {leaderboardList?.map((item, index) => <LeaderboardItem key={i++}  name={item.name} points={item.points} index={index}/>)}
-                        <LeaderboardItem name={"Anmol Kumar"} points={150} index={2}/>
-                        <LeaderboardItem name={"Anmol Kumar"} points={150} index={2}/>
-                        <LeaderboardItem name={"Anmol Kumar"} points={150} index={2}/>
-                        <LeaderboardItem name={"Anmol Kumar"} points={150} index={2}/>
-                        <LeaderboardItem name={"Anmol Kumar"} points={150} index={2}/>
-                        <LeaderboardItem name={"Anmol Kumar"} points={150} index={2}/>
+                        {leaderboardList?.map((item, index) => <Link key={i2++} href={"/profile/" + item.id}><LeaderboardItem key={i++}  name={item.name} points={item.points} index={index}/></Link>)}
                     </div>
                 </div>
             </div>
