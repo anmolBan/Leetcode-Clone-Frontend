@@ -1,26 +1,19 @@
+"use server"
+
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/db"
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server"
 
 export async function GET(){
-    // const session = await getServerSession(authOptions);
-
-    // if(!session?.user){
-    //     return NextResponse.json({
-    //         message: "Unauthenticated"
-    //     }, {
-    //         status: 403
-    //     });
-    // }
-    // console.log("Anmol");
+    const session = await getServerSession(authOptions);
+    console.log(session?.user);
     try{
         const res = await prisma.user.findMany({
             orderBy: {
                 points: 'desc'
             }
         });
-        // console.log(res)
         return NextResponse.json({
             res
         }, {

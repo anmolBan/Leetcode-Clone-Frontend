@@ -8,6 +8,8 @@ import Link from "next/link";
 interface LeaderboardItem {
     id: string,
     name: string,
+    username: string,
+    email: string,
     points: number
 }
 
@@ -38,7 +40,7 @@ export default function Leaderboard() {
                         Leaderboard
                     </div>
                     <div className="pl-5">
-                        {leaderboardList?.map((item, index) => <Link key={i2++} href={"/profile/" + item.id}><LeaderboardItem key={i++}  name={item.name} points={item.points} index={index}/></Link>)}
+                        {leaderboardList?.map((item, index) => <LeaderboardItem key={i++} name={item.name} points={item.points} index={index} username={item.username} />)}
                     </div>
                 </div>
             </div>
@@ -46,16 +48,21 @@ export default function Leaderboard() {
     )
 }
 
-function LeaderboardItem({name, points, index} : {name: string, points: number, index: number}){
+function LeaderboardItem({name, points, username, index} : {name: string, points: number, username: string, index: number}){
     return (
         <div className="flex gap-14 mt-10">
             <div className="pt-1">{index + 1}</div>
             <div className="h-8 w-8 text-white text-center bg-blue-600 rounded-full flex flex-col justify-center">
-                <div>
-                    {name.charAt(0).toUpperCase()}
-                </div>
+                <Link href={"/profile/" + username}>
+                    <div>
+                        {name.charAt(0).toUpperCase()}
+                    </div>
+                </Link>
             </div>
-            <div className="w-60 pt-1">{name}</div>
+
+            <Link href={"/profile/" + username}>
+                <div className="w-60 pt-1">{name}</div>
+            </Link>
             <div className="pt-1">{points}</div>
         </div>
     )

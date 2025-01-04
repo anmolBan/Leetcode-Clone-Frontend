@@ -74,6 +74,7 @@ export const authOptions = {
                 user.id = newUser.id
             }
             user.id = existingUser?.id || ""
+            user.username = existingUser?.username || ""
             return true;
 
         } catch(error){
@@ -84,12 +85,14 @@ export const authOptions = {
     async jwt({ token, user } : {token: JWT, user: User}){
         if(user){
             token.id = user.id;
+            token.username = user.username;
         }
         return token;
     },
     async session({session, token} : { session: Session, token: JWT}){
         if(session.user){
-            session.user.id = token.id
+            session.user.id = token.id;
+            session.user.username = token.username
         }
         return session;
     }
