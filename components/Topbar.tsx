@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react"
 export const Topbar = () => {
     return (
         <div className="flex justify-center bg-gray-100">
-            <div className="w-8/12 bg-black min-h-56 p-5">
+            <div className="w-4/5 bg-black min-h-56 p-5">
                 <Link href="/">
                     <img src="/logo.png" className="max-w-56"/>
                 </Link>

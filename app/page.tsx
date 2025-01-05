@@ -11,7 +11,7 @@ export default function Home() {
     <div>
       <Topbar/>
       <div className="flex flex-col items-center h-screen bg-gray-100">
-        <div className="mt-2 w-8/12">
+        <div className="mt-2 w-4/5">
           <Card>Hi there</Card>
         </div>
       </div>
