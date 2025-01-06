@@ -1,17 +1,21 @@
 import prisma from "../db";
 
-export async function getProfileData({username} : {username: string}) {
+export async function getProfileData({finalUsername} : {finalUsername: string}) {
     try{
-        const res = await prisma.user.findUnique({
+        const res = await prisma.user.findFirst({
             where: {
-                username
+                OR : [
+                    {email: finalUsername},
+                    {username: finalUsername}
+                ]
             }
         });
 
         if(res){
             return {
                 success: true,
-                res
+                res,
+                message: "User found."
             }
         }
         return {

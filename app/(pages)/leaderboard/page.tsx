@@ -25,7 +25,6 @@ export default function Leaderboard() {
             const res = await axios.get<{res: LeaderboardItem[]}>("/api/routes/leaderboard", {
                 withCredentials: true
             });
-            console.log(res.data.res);
             setLeaderboardList(res.data.res);
         }
         useEffectFunction();

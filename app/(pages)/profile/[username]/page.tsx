@@ -11,14 +11,15 @@ import { redirect } from "next/navigation";
 export default async function Profile({ params }: { params: { username: string }}){
 
     const {username} = await params;
+    const finalUsername = decodeURIComponent(username);
 
     const session = await getServerSession(authOptions);
-
-    const data = await getProfileData({username});
-
+    
     if(!session?.user){
         redirect("/api/auth/signin");
     }
+    
+    const data = await getProfileData({finalUsername});
 
     return (
         <div>
@@ -26,8 +27,8 @@ export default async function Profile({ params }: { params: { username: string }
             <div className="flex flex-col items-center h-screen bg-gray-100">
                 <div className="w-4/5 mt-2 font-mono">
                     <Card>
-                        <Link href={"/profile/" + username}>
-                                {username}
+                        <Link href={"/profile/" + finalUsername}>
+                                {finalUsername}
                         </Link>
                         <div className="flex flex-col justify-center mt-2 h-64 bg-blue-600">
                             <div className=" text-[200px] text-white text-center font-extrabold">{data.res?.name?.charAt(0)}</div>

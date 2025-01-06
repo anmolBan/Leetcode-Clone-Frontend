@@ -7,7 +7,6 @@ import { NextResponse } from "next/server"
 
 export async function GET(){
     const session = await getServerSession(authOptions);
-    console.log(session?.user);
     try{
         const res = await prisma.user.findMany({
             orderBy: {
