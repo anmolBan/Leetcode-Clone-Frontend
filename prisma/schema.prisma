@@ -23,15 +23,13 @@ model User {
   updatedAt      DateTime   @updatedAt
   points         Int        @default(0)
   submissions    Submission[]
-  problems       Problem[]
+  solvedProblems SolvedProblem[]
 }
 
 model Problem {
   id             String     @id @default(uuid())
   title          String     @unique
   description    String
-  user           User       @relation(fields: [userId], references: [id])
-  userId         String
   difficulty     Difficulty
   tags           Tag[]
   testCases      TestCase[]
@@ -39,6 +37,7 @@ model Problem {
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
   points         Int
+  solvedBy       SolvedProblem[]
 }
 
 model Submission {
@@ -64,8 +63,17 @@ model TestCase {
 model Tag {
     id          String    @id @default(uuid())
     name        String    @unique
-    problemId   String
-    problem     Problem   @relation(fields: [problemId], references: [id])
+    // problemId   String
+    problem     Problem[]
+}
+
+model SolvedProblem {
+  id        String     @id @default(uuid())
+  user      User       @relation(fields: [userId], references: [id])
+  userId    String
+  problem   Problem    @relation(fields: [problemId], references: [id])
+  problemId String
+  solvedAt  DateTime   @default(now())
 }
 
 enum Difficulty {
