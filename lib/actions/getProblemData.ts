@@ -1,10 +1,16 @@
 import prisma from "../db";
 
-export async function getProblemData({id} : {id: string}){
+export async function getProblemData({problemId} : {problemId: string}){
     try{
-        const res = await prisma.problem.findUnique({
+        let res = await prisma.problem.findUnique({
             where: {
-                id
+                id: problemId
+            }
+        });
+
+        const res2 = await prisma.problemExample.findMany({
+            where: {
+                problemId
             }
         });
 
@@ -12,6 +18,7 @@ export async function getProblemData({id} : {id: string}){
             return {
                 success: true,
                 res,
+                examples: res2,
                 message: "Problem found."
             }
         }

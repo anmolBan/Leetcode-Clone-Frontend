@@ -14,42 +14,53 @@ datasource db {
 }
 
 model User {
-  id             String     @id @default(uuid())
-  name           String?
-  username       String?    @unique
-  email          String     @unique
-  password       String?
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  points         Int        @default(0)
-  submissions    Submission[]
-  solvedProblems SolvedProblem[]
+  id                String            @id @default(uuid())
+  name              String?
+  username          String?           @unique
+  email             String            @unique
+  password          String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  points            Int               @default(0)
+  submissions       Submission[]
+  solvedProblems    SolvedProblem[]
 }
 
 model Problem {
-  id             String     @id @default(uuid())
-  title          String     @unique
-  description    String
-  difficulty     Difficulty
-  tags           Tag[]
-  testCases      TestCase[]
-  solutions      Submission[]
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  points         Int
-  solvedBy       SolvedProblem[]
+  id                  String            @id @default(uuid())
+  title               String            @unique
+  problemStatement    String
+  constraints         String[]
+  difficulty          Difficulty
+  tags                Tag[]
+  testCases           TestCase[]
+  solutions           Submission[]
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  points              Int
+  solvedBy            SolvedProblem[]
+  problemExample      ProblemExample[]
+}
+
+model ProblemExample{
+  id             String    @id @default(uuid())
+  problem        Problem   @relation(fields: [problemId], references: [id])
+  problemId      String
+  input          String?
+  output         String?
+  explanation    String?
 }
 
 model Submission {
-  id             String     @id @default(uuid())
+  id             String             @id @default(uuid())
   code           String
   language       Language
-  user           User       @relation(fields: [userId], references: [id])
+  user           User               @relation(fields: [userId], references: [id])
   userId         String
-  problem        Problem    @relation(fields: [problemId], references: [id])
+  problem        Problem            @relation(fields: [problemId], references: [id])
   problemId      String
   status         SubmissionStatus
-  createdAt      DateTime   @default(now())
+  createdAt      DateTime           @default(now())
 }
 
 model TestCase {
@@ -63,7 +74,6 @@ model TestCase {
 model Tag {
     id          String    @id @default(uuid())
     name        String    @unique
-    // problemId   String
     problem     Problem[]
 }
 
