@@ -7,9 +7,11 @@ export const Topbar = () => {
     return (
         <div className="flex justify-center bg-gray-100">
             <div className="w-4/5 bg-black min-h-56 p-5">
-                <Link href="/">
-                    <img src="/logo.png" className="max-w-56"/>
-                </Link>
+                <div className="w-fit">
+                    <Link href="/">
+                        <img src="/logo.png" className="max-w-56"/>
+                    </Link>
+                </div>
                 <Navbar/>
             </div>
         </div>
@@ -55,7 +57,7 @@ function NavbarItem({title, route} : {
         if(session.data?.user){
             return (
                 <Link href={route + session.data.user.username}>
-                    <div className="max-10 text-gray-500 cursor-pointer hover:text-white text-base">
+                    <div className="max-10 font-mono font-extrabold text-gray-500 cursor-pointer hover:text-white text-lg">
                         {title}
                     </div>
                 </Link>
@@ -65,7 +67,7 @@ function NavbarItem({title, route} : {
     }
     return (
         <Link href={route}>
-            <div className="max-10 text-gray-500 cursor-pointer hover:text-white text-base">
+            <div className="max-10 text-gray-500 cursor-pointer font-mono font-extrabold pb-5 pl-5 hover:text-white text-lg">
                 {title}
             </div>
         </Link>
