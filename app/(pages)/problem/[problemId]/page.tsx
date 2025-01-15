@@ -1,12 +1,12 @@
 "use server";
 
-import { Card } from "@/components/Card";
+import CodeMirrorEditor from "@/components/CodeEditor";
 import { Topbar } from "@/components/Topbar";
 import { getProblemData } from "@/lib/actions/getProblemData";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import MonacoEditorWrapper from "@/components/MonacoEditor";
+// import MonacoEditorWrapper from "@/components/MonacoEditor";
 
 export default async function Problem({ params }: { params: { problemId: string } }) {
   const { problemId } = await params;
@@ -58,7 +58,8 @@ export default async function Problem({ params }: { params: { problemId: string 
           <div className="flex-1 pl-10">
             <div className="h-full border-l-2 border-gray-200">
               <div className="pl-5 pt-3 text-xl font-bold">Code Editor</div>
-              <MonacoEditorWrapper />
+              {/* <MonacoEditorWrapper /> */}
+              <CodeMirrorEditor/>
             </div>
           </div>
         </div>

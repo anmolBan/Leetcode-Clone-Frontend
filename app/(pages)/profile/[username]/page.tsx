@@ -1,6 +1,7 @@
 "use server"
 
 import { Card } from "@/components/Card";
+import NumberedProblemList from "@/components/NumberedProblemList";
 import { Topbar } from "@/components/Topbar";
 import { getProfileData } from "@/lib/actions/getProfileData";
 import { authOptions } from "@/lib/auth";
@@ -25,7 +26,7 @@ export default async function Profile({ params }: { params: { username: string }
         <div>
             <Topbar/>
             <div className="flex flex-col items-center h-screen bg-gray-100">
-                <div className="w-4/5 mt-2 font-mono">
+                <div className="w-4/5 mt-2 font-mono flex">
                     <Card>
                         <Link href={"/profile/" + finalUsername}>
                                 {finalUsername}
@@ -36,6 +37,7 @@ export default async function Profile({ params }: { params: { username: string }
                         {data.success ? <div className="mt-2 text-lg font-sans">{data.res?.name}</div> : <div>Null</div>}
                         {data.success ? <div className="font-sans text-sm mb-2">{data.res?.email}</div> : <div>Null</div>}
                     </Card>
+                    <NumberedProblemList/>
                 </div>
 
             </div>
