@@ -24,6 +24,7 @@ model User {
   points            Int               @default(0)
   submissions       Submission[]
   solvedProblems    SolvedProblem[]
+  codeDraft         CodeDraft[]
 }
 
 model Problem {
@@ -31,15 +32,16 @@ model Problem {
   title               String            @unique
   problemStatement    String
   constraints         String[]
-  difficulty          Difficulty
-  tags                Tag[]
-  testCases           TestCase[]
-  solutions           Submission[]
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
   points              Int
+  difficulty          Difficulty
+  tags                Tag[]
+  solutions           Submission[]
+  testCases           TestCases[]
   solvedBy            SolvedProblem[]
   problemExample      ProblemExample[]
+  codeDraft           CodeDraft[]
 }
 
 model ProblemExample{
@@ -63,12 +65,12 @@ model Submission {
   createdAt      DateTime           @default(now())
 }
 
-model TestCase {
+model TestCases {
   id             String     @id @default(uuid())
-  input          String
-  output         String
-  problem        Problem    @relation(fields: [problemId], references: [id])
+  input          Json
+  output         Json
   problemId      String
+  problem        Problem    @relation(fields: [problemId], references: [id])
 }
 
 model Tag {
@@ -84,6 +86,18 @@ model SolvedProblem {
   problem   Problem    @relation(fields: [problemId], references: [id])
   problemId String
   solvedAt  DateTime   @default(now())
+}
+
+model CodeDraft {
+  id        String     @id @default(uuid())
+  userId    String
+  user      User @relation(fields: [userId], references: [id])
+  problemId String
+  problem   Problem @relation(fields: [problemId], references: [id])
+  code      String
+  language  Language
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Difficulty {

@@ -1,30 +1,57 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import { EditorView } from "@codemirror/view";
-import { basicSetup } from "@codemirror/basic-setup"; // Import from correct package
-import { javascript } from "@codemirror/lang-javascript";
+import { useRef, useState } from "react";
+import MonacoEditor from "@monaco-editor/react";
+import axios from "axios";
+import { getProblemTestCases } from "@/lib/actions/getProblemTestCases";
 
-const CodeMirrorEditor = () => {
-  const editorRef = useRef<HTMLDivElement | null>(null);
+const MonacoEditorWrapper = ({codeTemplate, problemId} : {codeTemplate: string, problemId: string}) => {
+  let [code, setCode] = useState(localStorage.getItem("code") || codeTemplate);
+  let localTimeout = useRef<NodeJS.Timeout | null>(null);
+  let dbTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    if (!editorRef.current) return;
+  function handleEditorChange(value: string | undefined){
+    setCode(value || "");
+    if(localTimeout.current){
+      clearTimeout(localTimeout.current);
+    }
+    localTimeout.current = setTimeout(() => {
+      localStorage.setItem("code", value || "");
+      console.log(value);
+    }, 2000);
+  };
 
-    // Initialize CodeMirror editor
-    const editor = new EditorView({
-      doc: "function myCode() {\n  console.log('Hello, World!');\n}",
-      extensions: [basicSetup, javascript()],
-      parent: editorRef.current,
+  async function onSubmitHandler(){
+
+    const testCases = (await getProblemTestCases({problemId})).testCases;
+
+    const res = await axios.post("http://localhost:3001/submit-code", {
+        code,
+        testCases,
+        language: "JAVASCRIPT"
     });
 
-    // Cleanup on unmount
-    return () => {
-      editor.destroy();
-    };
-  }, []);
+    console.log(res);
+  }
 
-  return <div ref={editorRef}></div>;
+  return (
+    <div>
+        <MonacoEditor
+          height="80vh"
+          defaultLanguage="javascript"
+          value={code}
+          theme="vs-dark"
+          options={{
+            fontSize: 14,
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            automaticLayout: true,
+          }}
+          onChange={handleEditorChange}
+        />
+        <button onClick={onSubmitHandler}>Submit</button>
+    </div>
+  );
 };
 
-export default CodeMirrorEditor;
+export default MonacoEditorWrapper;

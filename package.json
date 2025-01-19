@@ -9,9 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@codemirror/basic-setup": "^0.20.0",
-    "@codemirror/lang-javascript": "^6.2.2",
-    "@codemirror/view": "^6.36.2",
+    "@monaco-editor/react": "^4.6.0",
     "@prisma/client": "^6.0.1",
     "@types/axios": "^0.9.36",
     "@types/bcrypt": "^5.0.2",

@@ -1,12 +1,11 @@
 "use server";
 
-import CodeMirrorEditor from "@/components/CodeEditor";
+import MonacoEditorWrapper from "@/components/CodeEditor";
 import { Topbar } from "@/components/Topbar";
 import { getProblemData } from "@/lib/actions/getProblemData";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-// import MonacoEditorWrapper from "@/components/MonacoEditor";
 
 export default async function Problem({ params }: { params: { problemId: string } }) {
   const { problemId } = await params;
@@ -56,10 +55,9 @@ export default async function Problem({ params }: { params: { problemId: string 
 
           {/* Code Editor Section */}
           <div className="flex-1 pl-10">
-            <div className="h-full border-l-2 border-gray-200">
-              <div className="pl-5 pt-3 text-xl font-bold">Code Editor</div>
-              {/* <MonacoEditorWrapper /> */}
-              <CodeMirrorEditor/>
+            <div className="h-full border-l-2 border-gray-200 rounded-md">
+              <div className="pl-5 flex flex-col rounded-t-lg text-white justify-center text-xl font-bold bg-zinc-500">Code Editor</div>
+              <MonacoEditorWrapper codeTemplate={"function twoSum(nums, target){\n\t//write your code here\n}"} problemId={problemId}/>
             </div>
           </div>
         </div>
