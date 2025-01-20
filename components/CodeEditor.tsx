@@ -3,10 +3,9 @@
 import { useRef, useState } from "react";
 import MonacoEditor from "@monaco-editor/react";
 import axios from "axios";
-import { getProblemTestCases } from "@/lib/actions/getProblemTestCases";
 
 const MonacoEditorWrapper = ({codeTemplate, problemId} : {codeTemplate: string, problemId: string}) => {
-  let [code, setCode] = useState(localStorage.getItem("code") || codeTemplate);
+  let [code, setCode] = useState(localStorage ? localStorage.getItem("code") || "" : codeTemplate);
   let localTimeout = useRef<NodeJS.Timeout | null>(null);
   let dbTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -23,15 +22,13 @@ const MonacoEditorWrapper = ({codeTemplate, problemId} : {codeTemplate: string, 
 
   async function onSubmitHandler(){
 
-    const testCases = (await getProblemTestCases({problemId})).testCases;
-
     const res = await axios.post("http://localhost:3001/submit-code", {
+        problemId,
         code,
-        testCases,
         language: "JAVASCRIPT"
     });
 
-    console.log(res);
+    console.log(res.data);
   }
 
   return (
