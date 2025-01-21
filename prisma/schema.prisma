@@ -98,6 +98,8 @@ model CodeDraft {
   language  Language
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([problemId, userId])
 }
 
 enum Difficulty {
