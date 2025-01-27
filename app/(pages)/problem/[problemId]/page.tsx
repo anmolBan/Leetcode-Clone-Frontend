@@ -4,6 +4,7 @@ import MonacoEditorWrapper from "@/components/CodeEditor";
 import { Topbar } from "@/components/Topbar";
 import { getProblemData } from "@/lib/actions/getProblemData";
 import { authOptions } from "@/lib/auth";
+import prisma from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
@@ -16,7 +17,29 @@ export default async function Problem({ params }: { params: { problemId: string 
     redirect("api/auth/signin");
   }
 
-  const data = await getProblemData({ problemId });
+  let data;
+  let isSolved;
+
+  try{
+    data = await getProblemData({ problemId });
+  
+    const problemSolvedData = await prisma.solvedProblem.findUnique({
+      where: {
+        userId_problemId: {
+          userId: session.user.id,
+          problemId
+        }
+      }
+    });
+
+    if(problemSolvedData){
+      isSolved = true;
+    }
+  } catch(error: any){
+    console.log("Error getting problem data or problem solved data:", error.message);
+    return;
+  }
+
 
   return (
     <div>
@@ -25,7 +48,10 @@ export default async function Problem({ params }: { params: { problemId: string 
         <div className="flex w-4/5 mt-2 bg-white font-mono">
           {/* Problem Details Section */}
           <div className="flex-1 pr-10">
-            <div className="pt-3 pl-5 text-2xl font-bold">{data.res?.title}</div>
+            <div className="flex justify-between">
+              <div className="pt-3 pl-5 text-2xl font-bold">{data.res?.title}</div>
+              {isSolved && <div className="flex flex-col justify-center mt-3 p-2 bg-green-600 rounded-lg text-white">Solved</div>}
+            </div>
             <div className="pl-5 pt-8">{data.res?.problemStatement}</div>
             <div>
               {data.examples?.map((example, index) => (

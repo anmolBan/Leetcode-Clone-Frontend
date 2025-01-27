@@ -6,6 +6,7 @@ import { draftCode } from "@/lib/actions/draftCode";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { handleSubmitButton } from "@/lib/actions/handleSubmitButton";
+import { getDraftedCode } from "@/lib/actions/getDraftedCode";
 
 interface MonacoEditorWrapperPropsType {
   codeTemplate: string;
@@ -30,11 +31,24 @@ const MonacoEditorWrapper = ({codeTemplate, problemId} : MonacoEditorWrapperProp
   const userId = session?.user.id || "";
 
   useEffect(() => {
-    const savedCode = localStorage.getItem(`${problemId}-code`);
-    if(savedCode) {
-      setCode(savedCode);
+    async function useEffectFunction(){
+      const savedCode = localStorage.getItem(`${problemId}-code`);
+      if(savedCode) {
+        setCode(savedCode);
+      }
+      else{
+        const res: any = await getDraftedCode({userId, problemId});
+        if(res.status !== 404){
+          const currCode = res.code;
+          setCode(currCode);
+        }
+        else{
+          setCode(codeTemplate);
+        }
+      }
     }
-  }, []);
+    useEffectFunction();
+  }, [problemId, userId, getDraftedCode]);
 
   function handleEditorChange(value: string | undefined){
     if(!session?.user.id){

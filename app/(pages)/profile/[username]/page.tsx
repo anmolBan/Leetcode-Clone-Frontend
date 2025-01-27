@@ -12,7 +12,7 @@ import { redirect } from "next/navigation";
 export default async function Profile({ params }: { params: { username: string }}){
 
     const {username} = await params;
-    const finalUsername = decodeURIComponent(username);
+    let finalUsername = decodeURIComponent(username);
 
     const session = await getServerSession(authOptions);
     

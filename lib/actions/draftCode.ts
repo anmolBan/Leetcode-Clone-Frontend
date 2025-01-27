@@ -2,7 +2,6 @@
 import prisma from "../db";
 
 export async function draftCode({code, problemId, userId}: {code: string, problemId: string, userId: string}){
-    console.log("code-draft called")
     try{
         const res = await prisma.codeDraft.upsert({
             where: {
