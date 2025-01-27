@@ -2,12 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import MonacoEditor from "@monaco-editor/react";
-import axios from "axios";
 import { draftCode } from "@/lib/actions/draftCode";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { handleSubmitButton } from "@/lib/actions/handleSubmitButton";
 
-const MonacoEditorWrapper = ({codeTemplate, problemId} : {codeTemplate: string, problemId: string}) => {
+interface MonacoEditorWrapperPropsType {
+  codeTemplate: string;
+  problemId: string
+}
+
+const MonacoEditorWrapper = ({codeTemplate, problemId} : MonacoEditorWrapperPropsType) => {
   let [code, setCode] = useState(codeTemplate);
   let localTimeout = useRef<NodeJS.Timeout | null>(null);
   let dbTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -15,28 +20,32 @@ const MonacoEditorWrapper = ({codeTemplate, problemId} : {codeTemplate: string, 
   const {data: session, status} = useSession();
   const router = useRouter();
 
-  if(status === "unauthenticated"){
-    router.push("/api/auth/signin");
-  }
+  useEffect(() => {
+    if(status === "unauthenticated"){
+      router.push("/api/auth/signin");
+    }
+  }, [status, router]);
+
 
   const userId = session?.user.id || "";
 
-
-   // Fetch code from localStorage after the component has mounted
-   useEffect(() => {
-    const savedCode = localStorage.getItem("code");
-    if (savedCode) {
+  useEffect(() => {
+    const savedCode = localStorage.getItem(`${problemId}-code`);
+    if(savedCode) {
       setCode(savedCode);
     }
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []);
 
   function handleEditorChange(value: string | undefined){
+    if(!session?.user.id){
+      router.push("/api/auth/signin");
+    }
     setCode(value || "");
     if(localTimeout.current){
       clearTimeout(localTimeout.current);
     }
     localTimeout.current = setTimeout(() => {
-      localStorage.setItem("code", value || "");
+      localStorage.setItem(`${problemId}-code`, value || "");
     }, 2000);
 
     if(dbTimeout.current){
@@ -45,19 +54,22 @@ const MonacoEditorWrapper = ({codeTemplate, problemId} : {codeTemplate: string, 
 
     dbTimeout.current = setTimeout(() => {
       draftCode({code, problemId, userId});
-      console.log("waah ji waah");
-    }, 2000); 
+    }, 20000); 
   };
 
   async function onSubmitHandler(){
-
-    const res = await axios.post("http://localhost:3001/submit-code", {
-        problemId,
-        code,
-        language: "JAVASCRIPT"
-    });
-
-    console.log(res.data);
+    try{
+      const data : any = await handleSubmitButton({userId, problemId, code});
+      console.log(data.error);
+      if(data.success){
+        alert("Success");
+      }
+      else{
+        alert(`Submission Failed!\n\nError: ${data.error}`);
+      }
+    } catch(error: any){
+      console.log(error.message);
+    }
   }
 
   return (
@@ -75,7 +87,9 @@ const MonacoEditorWrapper = ({codeTemplate, problemId} : {codeTemplate: string, 
           }}
           onChange={handleEditorChange}
         />
-        <button onClick={onSubmitHandler}>Submit</button>
+        <div className="flex justify-center mt-5">
+          <button onClick={onSubmitHandler} className="px-4 py-2  bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50">Submit</button>
+        </div>
     </div>
   );
 };

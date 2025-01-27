@@ -57,11 +57,11 @@ model Submission {
   id             String             @id @default(uuid())
   code           String
   language       Language
-  user           User               @relation(fields: [userId], references: [id])
   userId         String
-  problem        Problem            @relation(fields: [problemId], references: [id])
   problemId      String
   status         SubmissionStatus
+  user           User               @relation(fields: [userId], references: [id])
+  problem        Problem            @relation(fields: [problemId], references: [id])
   createdAt      DateTime           @default(now())
 }
 
@@ -86,6 +86,8 @@ model SolvedProblem {
   problem   Problem    @relation(fields: [problemId], references: [id])
   problemId String
   solvedAt  DateTime   @default(now())
+
+  @@unique([userId, problemId])
 }
 
 model CodeDraft {
@@ -121,6 +123,5 @@ enum SubmissionStatus {
   ACCEPTED
   WRONG_ANSWER
   TIME_LIMIT_EXCEEDED
-  RUNTIME_ERROR
-  COMPILATION_ERROR
+  ERROR
 }
