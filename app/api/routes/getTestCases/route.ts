@@ -16,6 +16,12 @@ export async function GET(req: NextRequest){
         const res = await prisma.testCases.findMany({
             where: {
                 problemId
+            },
+            select: {
+                id: false,
+                input: true,
+                output: true,
+                problemId: false
             }
         });
 

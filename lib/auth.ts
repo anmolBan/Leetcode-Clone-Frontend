@@ -24,7 +24,7 @@ export const authOptions = {
         },
         async authorize(credentials, req) {
             try{
-                const user = await prisma.user.findFirst({
+                const res = await prisma.user.findFirst({
                     where: {
                         OR : [
                             {email: credentials?.emailOrUsername || ""},
@@ -32,15 +32,20 @@ export const authOptions = {
                         ]
                     }
                 });
-                if(!user){
+                if(!res){
                     throw new Error("Invalid Credentials");
                 }
                 else{
-                    const isPasswordValid = await bcrypt.compare(credentials?.password || "", user.password || "");
+                    const isPasswordValid = await bcrypt.compare(credentials?.password || "", res.password || "");
                     if(!isPasswordValid){
                         throw new Error("Invalid Password");
                     }
-                    return user;
+                    return {
+                        id: res.id,
+                        name: res.name || "",
+                        email: res.email,
+                        username: res.username || ""
+                    }
                 }
             } catch(error){
                 console.error("Error during authrization: ", error);

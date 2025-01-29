@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 
 let index = 0;
 let index2 = 0;
-let linkIndex = 0;
 
 interface Problem {
     id: string;

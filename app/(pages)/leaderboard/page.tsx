@@ -1,34 +1,25 @@
-"use client"
+"use server"
 
 import { Topbar } from "@/components/Topbar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { getLeaderboard } from "@/lib/actions/getLeaderboard";
 
 interface LeaderboardItem {
-    id: string,
     name: string,
     username: string,
-    email: string,
-    points: number
+    points: number,
+    rank: number
 }
 
 let i = 0;
-let i2 = 0;
 
-export default function Leaderboard() {
+export default async function Leaderboard() {
 
-    const [leaderboardList, setLeaderboardList] = useState<LeaderboardItem[]>();
-
-    useEffect(() => {
-        async function useEffectFunction(){
-            const res = await axios.get<{res: LeaderboardItem[]}>("/api/routes/leaderboard", {
-                withCredentials: true
-            });
-            setLeaderboardList(res.data.res);
-        }
-        useEffectFunction();
-    }, [])
+    const res = await getLeaderboard();
+    console.log(res);
+    const leaderboardList = res.data;
 
     return (
         <div>

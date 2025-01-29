@@ -1,3 +1,4 @@
+import { SubmissionActivityList } from "@/components/SubmissionActivityList";
 import { Topbar } from "@/components/Topbar";
 import Link from "next/link";
 
@@ -11,7 +12,7 @@ export default function Activity(){
                         Activity
                     </div>
                     <div className="mt-10 pb-20 pl-5 w-11/12 ">
-                        Meetcode is an application for Coding Geeks to try out new coding problems and keep track of who solves what. Named after one of the most prolific coding websites of all times, <span className="font-bold underline"><Link href="https://leetcode.com">Leetcode</Link></span>, it is a portal for users to test their mettle on various coding problems.
+                        <SubmissionActivityList/>
                     </div>
                 </div>
             </div>
