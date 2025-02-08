@@ -11,7 +11,7 @@ export default function Activity(){
                     <div className="pt-3 pl-5 text-2xl font-bold">
                         Activity
                     </div>
-                    <div className="mt-10 pb-20 pl-5 w-11/12 ">
+                    <div className="mt-10 pb-20">
                         <SubmissionActivityList/>
                     </div>
                 </div>

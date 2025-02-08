@@ -1,12 +1,23 @@
 import prisma from "../db";
 
-export async function getProblemData({problemId} : {problemId: string}){
+interface ExamplesType{
+    input: string;
+    output: string;
+    explanation?: string;
+}
+
+export async function getProblemData({problemTitle} : {problemTitle: string}){
     try{
-        let res = await prisma.problem.findUnique({
+        const res = await prisma.problem.findFirst({
             where: {
-                id: problemId
+                title: problemTitle
             }
         });
+
+        let problemId;
+        if(res){
+            problemId = res.id;
+        }
 
         const res2 = await prisma.problemExample.findMany({
             where: {
@@ -14,12 +25,30 @@ export async function getProblemData({problemId} : {problemId: string}){
             }
         });
 
-        if(res){
+        if(res && res2){
+            const examples : ExamplesType[] = [];
+
+            res2.map((example) => {
+                const curr = {
+                    input: example.input || "",
+                    output: example.output || "",
+                    explanation: example.explanation || ""
+                }
+                examples.push(curr);
+            });
+
             return {
                 success: true,
-                res,
-                examples: res2,
-                message: "Problem found."
+                res: {
+                    id: res.id,
+                    title: res.title,
+                    problemStatement: res.problemStatement,
+                    constraints: res.constraints,
+                    points: res.points,
+                    difficulty: res.difficulty
+                },
+                examples,
+                message: "Problem found"
             }
         }
         return {

@@ -8,20 +8,23 @@ import prisma from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
-export default async function Problem({ params }: { params: { problemId: string } }) {
-  const { problemId } = await params;
-
+export default async function Problem({ params }: { params: { problemTitle: string } }) {
+  let { problemTitle } = await params;
+  problemTitle = decodeURIComponent(problemTitle);
+  
   const session = await getServerSession(authOptions);
-
+  
   if (!session?.user) {
-    redirect("api/auth/signin");
+    redirect("/api/auth/signin");
   }
-
+  
   let data;
   let isSolved;
-
+  let problemId;
+  
   try{
-    data = await getProblemData({ problemId });
+    data = await getProblemData({ problemTitle });
+    problemId = data.res?.id || "";
   
     const problemSolvedData = await prisma.solvedProblem.findUnique({
       where: {
@@ -100,7 +103,7 @@ function ProblemExample({
 }: {
   input: string | null;
   output: string | null;
-  explanation: string | null;
+  explanation?: string | null;
   index: number;
 }) {
   return (

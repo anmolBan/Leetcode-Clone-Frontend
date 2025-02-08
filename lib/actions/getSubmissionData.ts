@@ -5,25 +5,34 @@ export async function getSubmissionData(){
     try{
         const res = await prisma.submission.findMany({
             include: {
-                user: true
+                user: true,
+                problem: true
             }
         });
 
         const leaderboardData = await getLeaderboard();
-        console.log(leaderboardData);
-        const submissionDetails = [];
+
+        if(!leaderboardData || !leaderboardData.data){
+            return {
+                message: "Ranks not found.",
+                status: 400
+            }
+        }
+        const submissionDetails: any = [];
         res.map((entry) => {
             const curr = {
                 name: entry.user.name,
-                username: entry.user.name,
+                username: entry.user.username,
+                problemName: entry.problem.title,
                 status: entry.status === "ACCEPTED" ? "true" : "false",
-                submissionTime: entry.createdAt
+                submissionTime: entry.createdAt,
             }
+            submissionDetails.push(curr);
         });
         if(res){
             return {
                 message: "Submissions found!",
-                res,
+                res: submissionDetails,
                 status: 200
             }
         }

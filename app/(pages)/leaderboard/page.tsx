@@ -1,8 +1,6 @@
 "use server"
 
 import { Topbar } from "@/components/Topbar";
-import { useEffect, useState } from "react";
-import axios from "axios";
 import Link from "next/link";
 import { getLeaderboard } from "@/lib/actions/getLeaderboard";
 
@@ -18,7 +16,6 @@ let i = 0;
 export default async function Leaderboard() {
 
     const res = await getLeaderboard();
-    console.log(res);
     const leaderboardList = res.data;
 
     return (
