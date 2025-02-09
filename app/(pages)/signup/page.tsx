@@ -5,6 +5,7 @@ import { handleSignup } from "@/lib/actions/handleSignup";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import zod from "zod";
 
 export default function Signup(){
     const [name, setName] = useState("");

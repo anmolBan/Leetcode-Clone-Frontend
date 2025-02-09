@@ -9,6 +9,20 @@ import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+interface ProfileDataType{
+    name: string | null;
+    username: string | null;
+    email: string | null;
+    points: number | null;
+}
+
+interface GetProfileDataResponseType{
+    message: string;
+    userDetails?: ProfileDataType;
+    error?: any;
+    status: number;
+}
+
 export default async function Profile({ params }: { params: { username: string }}){
 
     const {username} = await params;
@@ -20,7 +34,9 @@ export default async function Profile({ params }: { params: { username: string }
         redirect("/api/auth/signin");
     }
     
-    const data = await getProfileData({finalUsername});
+    const res: GetProfileDataResponseType = await getProfileData({finalUsername});
+
+    const data = res.userDetails;
 
     return (
         <div>
@@ -32,10 +48,10 @@ export default async function Profile({ params }: { params: { username: string }
                                 {finalUsername}
                         </Link>
                         <div className="flex flex-col justify-center mt-2 h-64 bg-blue-600">
-                            <div className=" text-[200px] text-white text-center font-extrabold">{data.res?.name?.charAt(0)}</div>
+                            <div className=" text-[200px] text-white text-center font-extrabold">{(data?.name || "").charAt(0)}</div>
                         </div>
-                        {data.success ? <div className="mt-2 text-lg font-sans">{data.res?.name}</div> : <div>Null</div>}
-                        {data.success ? <div className="font-sans text-sm mb-2">{data.res?.email}</div> : <div>Null</div>}
+                        {data ? <div className="mt-2 text-lg font-sans">{data.name}</div> : <div>Null</div>}
+                        {data ? <div className="font-sans text-sm mb-2">{data.email}</div> : <div>Null</div>}
                     </Card>
                     <NumberedProblemList/>
                 </div>

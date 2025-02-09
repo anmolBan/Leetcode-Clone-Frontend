@@ -1,4 +1,13 @@
+"use server"
+
 import prisma from "../db";
+
+// interface UserDetailsType{
+//     name: string;
+//     username: string;
+//     email: string;
+//     points: number;
+// }
 
 export async function getProfileData({finalUsername} : {finalUsername: string}) {
     try{
@@ -11,23 +20,29 @@ export async function getProfileData({finalUsername} : {finalUsername: string}) 
             }
         });
 
+        console.log(res);
+
         if(res){
             return {
-                success: true,
-                res,
-                message: "User found."
+                message: "User found.",
+                userDetails: {
+                    name: res.name,
+                    username: res.username,
+                    email: res.email,
+                    points: res.points
+                },
+                status: 200
             }
         }
         return {
-            success: false,
-            res: null,
-            message: "User can't be found with the given username."
+            message: "User can't be found with the given username.",
+            status: 400
         }
-    } catch(error){
+    } catch(error: any){
         return {
-            success: false,
-            res: null,
-            message: "Error finding the user", error
+            message: "Error finding the user",
+            error: error.message,
+            status: 500
         }
     }
 
