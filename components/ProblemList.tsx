@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import PaginationNumberList from "./PaginationNumberList";
 
 interface TagType{
     name: string;
@@ -17,14 +18,16 @@ interface ProblemListType {
 interface ProblemListResponseType{
     message: string;
     problemList?: ProblemListType[];
+    totalProblemCount?: number;
     error?: any;
     status: number;
 }
 
-export const ProblemList = () => {
+export const ProblemList = ({page} : {page: string}) => {
     const {data: session, status} = useSession();
     const router = useRouter();
     const [problemList, setProblemList] = useState<ProblemListType[]>([]);
+    const [totalProblemCount, setTotalProblemCount] = useState(-1);
 
     useEffect(() => {
         if(status === "unauthenticated"){
@@ -34,11 +37,12 @@ export const ProblemList = () => {
 
     useEffect(() => {
         async function useEffectFunction(){
-            const res : ProblemListResponseType = await getProblemList();
+            const res : ProblemListResponseType = await getProblemList({page});
             if(!res || !res.problemList){
                 return;
             }
             setProblemList(res.problemList);
+            setTotalProblemCount(res.totalProblemCount || -1);
         }
         useEffectFunction();
     }, []);
@@ -49,6 +53,9 @@ export const ProblemList = () => {
             </div>
             <div className="flex flex-col gap-5 mt-10 w-11/12">
                 {problemList.map((problem, i) => <ProblemListItem key={i} title={problem.title} problemTags={problem.tags} indexNumber={i} />)}
+            </div>
+            <div className="my-12 text-center">
+                <PaginationNumberList pagePath={"problems"} pageNumber={page} count={totalProblemCount} entriesPerPage={5}/>
             </div>
         </div>
     )

@@ -1,23 +1,20 @@
 import prisma from "../db";
 import { getLeaderboard } from "./getLeaderboard";
 
-export async function getSubmissionData(){
+export async function getSubmissionData({page}: {page: string}){
     try{
+        const totalCount = await prisma.submission.count({});
+
         const res = await prisma.submission.findMany({
             include: {
                 user: true,
                 problem: true
-            }
+            },
+            take: 10,
+            skip: (parseInt(page) - 1) * 5,
+            orderBy: { createdAt: 'desc' }
         });
 
-        const leaderboardData = await getLeaderboard();
-
-        if(!leaderboardData || !leaderboardData.data){
-            return {
-                message: "Ranks not found.",
-                status: 400
-            }
-        }
         const submissionDetails: any = [];
         res.map((entry) => {
             const curr = {
@@ -33,6 +30,7 @@ export async function getSubmissionData(){
             return {
                 message: "Submissions found!",
                 res: submissionDetails,
+                totalSubmissionCount: totalCount,
                 status: 200
             }
         }

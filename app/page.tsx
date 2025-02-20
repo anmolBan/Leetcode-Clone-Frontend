@@ -1,12 +1,12 @@
 "use client"
 
 import { Card } from "@/components/Card";
-import { SigninSignout } from "@/components/SigninSignout";
 import { Topbar } from "@/components/Topbar";
 import { useSession } from "next-auth/react";
 
 export default function Home() {
-  const session = useSession();
+  const {data: session, status} = useSession();
+
   return (
     <div>
       <Topbar/>

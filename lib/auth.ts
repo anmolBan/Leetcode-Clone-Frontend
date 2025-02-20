@@ -76,7 +76,12 @@ export const authOptions = {
                         username: user.email
                     }
                 });
-                user.id = newUser.id
+                if(!newUser.username){
+                    return false;
+                }
+                user.id = newUser.id;
+                user.username = newUser.username;
+                return true;
             }
             user.id = existingUser?.id || ""
             user.username = existingUser?.username || ""

@@ -7,8 +7,17 @@ interface LeaderboardArrayItemType{
     rank: number;
 }
 
-export async function getLeaderboard(){
+export async function getLeaderboard({leaderboardAPIKey, page}: {leaderboardAPIKey: string | undefined, page: string}){
+
+    if(leaderboardAPIKey !== process.env.LEADERBOARD_API_KEY){
+        return {
+            message: "Invalid API Key",
+            status: 400
+        }
+    }
     try{
+        const totalCount = await prisma.user.count({});
+
         const res = await prisma.user.findMany({
             orderBy: {
                 points: 'desc'
@@ -29,6 +38,7 @@ export async function getLeaderboard(){
             return {
                 message: "Leaderboard found.",
                 data,
+                totalLeaderboardCount: totalCount,
                 status: 200
             }
         }

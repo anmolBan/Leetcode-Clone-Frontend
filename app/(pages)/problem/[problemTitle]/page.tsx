@@ -118,9 +118,9 @@ function ProblemExample({
           <div className="font-extrabold">Output:</div>
           {output}
         </div>
-        {explanation !== null ? (
-          <div className="flex gap-2">
-            <div className="font-extrabold">Explanation:</div>
+        {explanation?.length !== 0 ? (
+          <div>
+            <span className="font-extrabold">Explanation: </span>
             {explanation}
           </div>
         ) : null}

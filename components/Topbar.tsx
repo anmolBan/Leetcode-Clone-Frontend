@@ -24,13 +24,13 @@ const navbarItems = [
         route: "/about"
     }, {
         title: "Activity",
-        route: "/activity"
+        route: "/activity/1"
     }, {
         title: "Problems",
-        route: "/problems"
+        route: "/problems/1"
     }, {
         title: "Leaderboard",
-        route: "/leaderboard"
+        route: "/leaderboard/1"
     }, {
         title: "My profile",
         route: "/profile/"
@@ -51,12 +51,12 @@ function NavbarItem({title, route} : {
     title: string,
     route: string
 }){
-    const session = useSession();
+    const {data:session, status} = useSession();
 
     if(title === "My profile"){
-        if(session.data?.user){
+        if(session?.user){
             return (
-                <Link href={route + session.data.user.username}>
+                <Link href={route + session.user.username}>
                     <div className="max-10 font-mono font-extrabold pl-5 text-gray-500 cursor-pointer hover:text-white text-lg">
                         {title}
                     </div>

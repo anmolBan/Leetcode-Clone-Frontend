@@ -1,8 +1,8 @@
 import { SubmissionActivityList } from "@/components/SubmissionActivityList";
 import { Topbar } from "@/components/Topbar";
-import Link from "next/link";
 
-export default function Activity(){
+export default async function Activity({params} : {params: {page: string}}){
+    let { page } = await params;
     return (
         <div>
             <Topbar/>
@@ -11,8 +11,8 @@ export default function Activity(){
                     <div className="pt-3 pl-5 text-2xl font-bold">
                         Activity
                     </div>
-                    <div className="mt-10 pb-20">
-                        <SubmissionActivityList/>
+                    <div className="mt-10 pb-30">
+                        <SubmissionActivityList page={page}/>
                     </div>
                 </div>
             </div>

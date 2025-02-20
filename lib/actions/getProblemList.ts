@@ -11,12 +11,17 @@ interface ProblemListType {
     tags: TagType[];
 }
 
-export async function getProblemList(){
+export async function getProblemList({page}: {page: string}){
     try{
+        const totalCount = await prisma.problem.count({});
+
         const res = await prisma.problem.findMany({
             include: {
                 tags: true
-            }
+            },
+            take: 10,
+            skip: (parseInt(page) - 1) * 10,
+            orderBy: {createdAt : "desc"}
         });
 
         const problemList: ProblemListType[] = [];
@@ -39,6 +44,7 @@ export async function getProblemList(){
             return {
                 message: "Problem list found",
                 problemList,
+                totalProblemCount: totalCount,
                 status: 200
             }
         }

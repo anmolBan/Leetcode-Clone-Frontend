@@ -20,8 +20,6 @@ export async function getProfileData({finalUsername} : {finalUsername: string}) 
             }
         });
 
-        console.log(res);
-
         if(res){
             return {
                 message: "User found.",

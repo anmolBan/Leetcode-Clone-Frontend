@@ -3,6 +3,7 @@
 import { Topbar } from "@/components/Topbar";
 import Link from "next/link";
 import { getLeaderboard } from "@/lib/actions/getLeaderboard";
+import PaginationNumberList from "@/components/PaginationNumberList";
 
 interface LeaderboardItem {
     name: string,
@@ -11,11 +12,18 @@ interface LeaderboardItem {
     rank: number
 }
 
-let i = 0;
+interface LeaderboardDataType{
+    message: string;
+    status: number;
+    data?: LeaderboardItem[];
+    totalLeaderboardCount?: number;
+    error?: any;
+}
 
-export default async function Leaderboard() {
-
-    const res = await getLeaderboard();
+export default async function Leaderboard({params} : {params: {page: string}}) {
+    const {page} = await params;
+    const leaderboardAPIKey = process.env.LEADERBOARD_API_KEY;
+    const res : LeaderboardDataType = await getLeaderboard({leaderboardAPIKey, page});
     const leaderboardList = res.data;
 
     return (
@@ -27,7 +35,10 @@ export default async function Leaderboard() {
                         Leaderboard
                     </div>
                     <div className="pl-5">
-                        {leaderboardList?.map((item, index) => <LeaderboardItem key={i++} name={item.name} points={item.points} index={index} username={item.username} />)}
+                        {leaderboardList?.map((item, index) => <LeaderboardItem key={index} name={item.name} points={item.points} index={index} username={item.username} />)}
+                    </div>
+                    <div className="my-12 text-center">
+                        <PaginationNumberList pagePath={"leaderboard"} pageNumber={page} count={res.totalLeaderboardCount || -1} entriesPerPage={10}/>
                     </div>
                 </div>
             </div>
@@ -48,7 +59,7 @@ function LeaderboardItem({name, points, username, index} : {name: string, points
             </div>
 
             <Link href={"/profile/" + username}>
-                <div className="w-60 pt-1">{name}</div>
+                <div className="w-60 pt-1 hover:cursor-pointer hover:font-bold">{name}</div>
             </Link>
             <div className="pt-1">{points}</div>
         </div>
