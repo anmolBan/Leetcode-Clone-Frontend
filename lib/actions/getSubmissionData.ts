@@ -11,7 +11,7 @@ export async function getSubmissionData({page}: {page: string}){
                 problem: true
             },
             take: 10,
-            skip: (parseInt(page) - 1) * 5,
+            skip: (parseInt(page) - 1) * 10,
             orderBy: { createdAt: 'desc' }
         });
 

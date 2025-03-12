@@ -25,7 +25,7 @@ export async function handleSignup({name, email, username, password} : {name: st
 
     const hashedPasword = await bcrypt.hash(password, 10);
     try{
-        const res = await prisma.user.create({
+        await prisma.user.create({
             data: {
                 name,
                 email,

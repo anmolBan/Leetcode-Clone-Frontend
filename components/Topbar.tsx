@@ -2,6 +2,7 @@
 import Link from "next/link"
 import { SigninSignout } from "./SigninSignout"
 import { useSession } from "next-auth/react"
+import SearchBar from "./Search"
 
 export const Topbar = () => {
     return (
@@ -12,7 +13,10 @@ export const Topbar = () => {
                         <img src="/logo.png" className="max-w-56"/>
                     </Link>
                 </div>
-                <Navbar/>
+                <div className="flex justify-between">
+                    <Navbar/>
+                    <SearchBar/>
+                </div>
             </div>
         </div>
     )
