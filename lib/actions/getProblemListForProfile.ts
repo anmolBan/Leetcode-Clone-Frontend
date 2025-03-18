@@ -27,9 +27,9 @@ export default async function getProblemListForProfile(){
             }
         }
 
-        res.map((item, index) => {
+        res.map((item) => {
             const currSolvedBy: SolvedByType[] = [];
-            item.solvedBy.map((item2, index) => {
+            item.solvedBy.map((item2) => {
                 const curr2 = {
                     userId: item2.userId,
                     problemId: item2.problemId

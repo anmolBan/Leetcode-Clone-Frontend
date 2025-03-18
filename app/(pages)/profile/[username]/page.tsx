@@ -23,10 +23,10 @@ interface GetProfileDataResponseType{
     status: number;
 }
 
-export default async function Profile({ params }: { params: { username: string }}){
+export default async function Profile({ params }: { params: Promise<{ username: string }>}){
 
     const {username} = await params;
-    let finalUsername = decodeURIComponent(username);
+    const finalUsername = decodeURIComponent(username);
 
     const session = await getServerSession(authOptions);
     

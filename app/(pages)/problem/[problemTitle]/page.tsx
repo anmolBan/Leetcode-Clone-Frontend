@@ -8,7 +8,7 @@ import prisma from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
-export default async function Problem({ params }: { params: { problemTitle: string } }) {
+export default async function Problem({ params }: { params: Promise<{ problemTitle: string }> }) {
   let { problemTitle } = await params;
   problemTitle = decodeURIComponent(problemTitle);
   
@@ -23,7 +23,8 @@ export default async function Problem({ params }: { params: { problemTitle: stri
   let problemId;
   
   try{
-    data = await getProblemData({ problemTitle });
+    const problemTitleOrId = problemTitle
+    data = await getProblemData({ problemTitleOrId });
     problemId = data.res?.id || "";
   
     const problemSolvedData = await prisma.solvedProblem.findUnique({

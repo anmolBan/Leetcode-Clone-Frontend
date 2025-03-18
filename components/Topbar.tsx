@@ -3,6 +3,7 @@ import Link from "next/link"
 import { SigninSignout } from "./SigninSignout"
 import { useSession } from "next-auth/react"
 import SearchBar from "./Search"
+import Image from "next/image"
 
 export const Topbar = () => {
     return (
@@ -10,7 +11,7 @@ export const Topbar = () => {
             <div className="w-4/5 bg-black min-h-56 p-5">
                 <div className="w-fit">
                     <Link href="/">
-                        <img src="/logo.png" className="max-w-56"/>
+                        <Image alt="logo" src="/logo.png" className="max-w-56"/>
                     </Link>
                 </div>
                 <div className="flex justify-between">
@@ -55,7 +56,7 @@ function NavbarItem({title, route} : {
     title: string,
     route: string
 }){
-    const {data:session, status} = useSession();
+    const {data:session} = useSession();
 
     if(title === "My profile"){
         if(session?.user){

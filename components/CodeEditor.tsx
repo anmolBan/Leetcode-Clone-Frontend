@@ -14,9 +14,9 @@ interface MonacoEditorWrapperPropsType {
 }
 
 const MonacoEditorWrapper = ({codeTemplate, problemId} : MonacoEditorWrapperPropsType) => {
-  let [code, setCode] = useState(codeTemplate);
-  let localTimeout = useRef<NodeJS.Timeout | null>(null);
-  let dbTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [code, setCode] = useState(codeTemplate);
+  const localTimeout = useRef<NodeJS.Timeout | null>(null);
+  const dbTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const {data: session, status} = useSession();
   const router = useRouter();
@@ -31,7 +31,7 @@ const MonacoEditorWrapper = ({codeTemplate, problemId} : MonacoEditorWrapperProp
   const userId = session?.user.id || "";
 
   useEffect(() => {
-    async function useEffectFunction(){
+    async function fetchCode(){
       const savedCode = localStorage.getItem(`${problemId}-code`);
       if(savedCode) {
         setCode(savedCode);
@@ -47,8 +47,8 @@ const MonacoEditorWrapper = ({codeTemplate, problemId} : MonacoEditorWrapperProp
         }
       }
     }
-    useEffectFunction();
-  }, [problemId, userId, getDraftedCode]);
+    fetchCode();
+  }, [problemId, userId, codeTemplate]);
 
   function handleEditorChange(value: string | undefined){
     if(!session?.user.id){

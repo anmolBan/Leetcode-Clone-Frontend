@@ -24,7 +24,7 @@ interface ProblemListResponseType{
 }
 
 export const ProblemList = ({page} : {page: string}) => {
-    const {data: session, status} = useSession();
+    const {status} = useSession();
     const router = useRouter();
     const [problemList, setProblemList] = useState<ProblemListType[]>([]);
     const [totalProblemCount, setTotalProblemCount] = useState(-1);
@@ -36,7 +36,7 @@ export const ProblemList = ({page} : {page: string}) => {
     }, [status, router]);
 
     useEffect(() => {
-        async function useEffectFunction(){
+        async function fetchProblemList(){
             const res : ProblemListResponseType = await getProblemList({page});
             if(!res || !res.problemList){
                 return;
@@ -44,8 +44,8 @@ export const ProblemList = ({page} : {page: string}) => {
             setProblemList(res.problemList);
             setTotalProblemCount(res.totalProblemCount || -1);
         }
-        useEffectFunction();
-    }, []);
+        fetchProblemList();
+    }, [page]);
     return (
         <div className="font-mono">
             <div className="pt-3 pl-5 text-2xl font-bold">

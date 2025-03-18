@@ -20,7 +20,7 @@ interface LeaderboardDataType{
     error?: any;
 }
 
-export default async function Leaderboard({params} : {params: {page: string}}) {
+export default async function Leaderboard({params} : {params: Promise<{page: string}>}) {
     const {page} = await params;
     const leaderboardAPIKey = process.env.LEADERBOARD_API_KEY;
     const res : LeaderboardDataType = await getLeaderboard({leaderboardAPIKey, page});

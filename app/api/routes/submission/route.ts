@@ -66,8 +66,9 @@ export async function POST(req: NextRequest){
             alreadyAccepted = true;
 
             const problemId = body.problemId;
+            const problemTitleOrId = problemId;
 
-            const problemData: any = await getProblemData({problemId});
+            const problemData: any = await getProblemData({problemTitleOrId});
             const points = problemData.res.points;
 
             if(problemData){

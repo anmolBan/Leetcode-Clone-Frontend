@@ -6,11 +6,14 @@ interface ExamplesType{
     explanation?: string;
 }
 
-export async function getProblemData({problemTitle} : {problemTitle: string}){
+export async function getProblemData({problemTitleOrId} : {problemTitleOrId: string}){
     try{
         const res = await prisma.problem.findFirst({
             where: {
-                title: problemTitle
+                OR: [
+                    { title: problemTitleOrId },
+                    { id: problemTitleOrId }
+                ]
             }
         });
 

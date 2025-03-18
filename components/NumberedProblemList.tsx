@@ -32,7 +32,7 @@ export default async function NumberedProblemList({userId}: {userId: string}){
             </div>
             <div className="ml-8 mr-8 grid grid-cols-12 gap-0">
                 {problemList?.map((item, index) => (
-                    <Link href={`/problem/${item.title}`}>
+                    <Link key={index} href={`/problem/${item.title}`}>
                         <div className={`relative group mt-5 h-8 w-8 ${item.solvedBy.find((item2) => item2.userId === userId) ? "bg-green-500 hover:cursor-pointer" : ""} flex items-center justify-center rounded-lg hover text-zinc-500`} key={index}>
                             {index + 1}
                             <div className="absolute left-1/2 -top-10 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-gray-700 text-nowrap text-white text-xs rounded p-2 shadow-lg">

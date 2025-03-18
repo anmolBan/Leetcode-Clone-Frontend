@@ -1,7 +1,7 @@
 import { ProblemList } from "@/components/ProblemList";
 import { Topbar } from "@/components/Topbar";
 
-export default async function Problems({params} : {params: {page: string}}){
+export default async function Problems({params} : {params: Promise<{page: string}>}){
     const {page} = await params;
     return (
         <div>

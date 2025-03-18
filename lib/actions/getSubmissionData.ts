@@ -1,5 +1,4 @@
 import prisma from "../db";
-import { getLeaderboard } from "./getLeaderboard";
 
 export async function getSubmissionData({page}: {page: string}){
     try{

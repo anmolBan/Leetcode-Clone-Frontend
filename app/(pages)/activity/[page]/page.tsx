@@ -1,8 +1,8 @@
 import { SubmissionActivityList } from "@/components/SubmissionActivityList";
 import { Topbar } from "@/components/Topbar";
 
-export default async function Activity({params} : {params: {page: string}}){
-    let { page } = await params;
+export default async function Activity({params} : {params: Promise<{page: string}>}){
+    const { page } = await params;
     return (
         <div>
             <Topbar/>

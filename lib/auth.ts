@@ -22,7 +22,7 @@ export const authOptions = {
           emailOrUsername: { label: "Email/Username", type: "text", placeholder: "xyz@gmail.com" },
           password: { label: "Password", type: "password" }
         },
-        async authorize(credentials, req) {
+        async authorize(credentials) {
             try{
                 const res = await prisma.user.findFirst({
                     where: {

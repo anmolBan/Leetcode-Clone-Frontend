@@ -7,7 +7,7 @@ interface LeaderboardArrayItemType{
     rank: number;
 }
 
-export async function getLeaderboard({leaderboardAPIKey, page}: {leaderboardAPIKey: string | undefined, page: string}){
+export async function getLeaderboard({leaderboardAPIKey}: {leaderboardAPIKey: string | undefined, page: string}){
 
     if(leaderboardAPIKey !== process.env.LEADERBOARD_API_KEY){
         return {
@@ -49,7 +49,7 @@ export async function getLeaderboard({leaderboardAPIKey, page}: {leaderboardAPIK
     } catch(error: any){
         return {
             message: "Error getting leaderboard",
-            error: error.message,
+            error: error,
             status: 500
         }
     }
