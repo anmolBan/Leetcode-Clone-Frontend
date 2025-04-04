@@ -22,6 +22,7 @@ model User {
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   points            Int               @default(0)
+  isAdmin           Boolean           @default(false)
   submissions       Submission[]
   solvedProblems    SolvedProblem[]
   codeDraft         CodeDraft[]
@@ -31,26 +32,15 @@ model Problem {
   id                  String            @id @default(uuid())
   title               String            @unique
   problemStatement    String
-  constraints         String[]
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
   points              Int
   difficulty          Difficulty
-  tags                Tag[]
+  tags                Tag[]  @relation("ProblemTags")
   solutions           Submission[]
   testCases           TestCases[]
   solvedBy            SolvedProblem[]
-  problemExample      ProblemExample[]
   codeDraft           CodeDraft[]
-}
-
-model ProblemExample{
-  id             String    @id @default(uuid())
-  problem        Problem   @relation(fields: [problemId], references: [id])
-  problemId      String
-  input          String?
-  output         String?
-  explanation    String?
 }
 
 model Submission {
@@ -74,9 +64,9 @@ model TestCases {
 }
 
 model Tag {
-    id          String    @id @default(uuid())
-    name        String    @unique
-    problem     Problem[]
+  id       String   @id @default(uuid())
+  name     String   @unique  // Ensures unique tag names
+  problems Problem[] @relation("ProblemTags") // Fixed Many-to-Many
 }
 
 model SolvedProblem {

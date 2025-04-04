@@ -58,7 +58,7 @@ export default async function Problem({ params }: { params: Promise<{ problemTit
             </div>
             <div className="pl-5 pt-8">{data.res?.problemStatement}</div>
             <div>
-              {data.examples?.map((example, index) => (
+              {/* {data.examples?.map((example, index) => (
                 <ProblemExample
                   key={index}
                   input={example.input}
@@ -66,10 +66,10 @@ export default async function Problem({ params }: { params: Promise<{ problemTit
                   explanation={example.explanation}
                   index={index}
                 />
-              ))}
+              ))} */}
             </div>
             <div className="my-5 pl-5">
-              <div className="font-extrabold mb-2">Constraints:</div>
+              {/* <div className="font-extrabold mb-2">Constraints:</div>
               {data.res?.constraints.map((constraint, index) => (
                 <div key={index} className="flex">
                   <div className="flex flex-col justify-center">
@@ -79,7 +79,7 @@ export default async function Problem({ params }: { params: Promise<{ problemTit
                     {constraint}
                   </div>
                 </div>
-              ))}
+              ))} */}
             </div>
           </div>
 
@@ -96,36 +96,36 @@ export default async function Problem({ params }: { params: Promise<{ problemTit
   );
 }
 
-function ProblemExample({
-  input,
-  output,
-  explanation,
-  index,
-}: {
-  input: string | null;
-  output: string | null;
-  explanation?: string | null;
-  index: number;
-}) {
-  return (
-    <div className="pl-5 pt-5">
-      <div className="font-extrabold">Example {index + 1}:</div>
-      <div className="pl-4 border-l-2 mt-1">
-        <div className="flex gap-2">
-          <div className="font-extrabold">Input:</div>
-          {input}
-        </div>
-        <div className="flex gap-2">
-          <div className="font-extrabold">Output:</div>
-          {output}
-        </div>
-        {explanation?.length !== 0 ? (
-          <div>
-            <span className="font-extrabold">Explanation: </span>
-            {explanation}
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
+// function ProblemExample({
+//   input,
+//   output,
+//   explanation,
+//   index,
+// }: {
+//   input: string | null;
+//   output: string | null;
+//   explanation?: string | null;
+//   index: number;
+// }) {
+//   return (
+//     <div className="pl-5 pt-5">
+//       <div className="font-extrabold">Example {index + 1}:</div>
+//       <div className="pl-4 border-l-2 mt-1">
+//         <div className="flex gap-2">
+//           <div className="font-extrabold">Input:</div>
+//           {input}
+//         </div>
+//         <div className="flex gap-2">
+//           <div className="font-extrabold">Output:</div>
+//           {output}
+//         </div>
+//         {explanation?.length !== 0 ? (
+//           <div>
+//             <span className="font-extrabold">Explanation: </span>
+//             {explanation}
+//           </div>
+//         ) : null}
+//       </div>
+//     </div>
+//   );
+// }

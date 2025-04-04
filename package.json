@@ -4,17 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx prisma migate && npx prisma generate && next build",
+    "build": "npx prisma generate && next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
     "@prisma/client": "^6.0.1",
+    "@tiptap/react": "^2.11.5",
+    "@tiptap/starter-kit": "^2.11.5",
     "@types/axios": "^0.9.36",
     "@types/bcrypt": "^5.0.2",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
+    "lucide-react": "^0.483.0",
     "next": "^15.1.4",
     "next-auth": "^4.24.11",
     "prisma": "^6.0.1",

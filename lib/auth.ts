@@ -44,7 +44,8 @@ export const authOptions = {
                         id: res.id,
                         name: res.name || "",
                         email: res.email,
-                        username: res.username || ""
+                        username: res.username || "",
+                        isAdmin: res.isAdmin
                     }
                 }
             } catch(error){
@@ -81,10 +82,12 @@ export const authOptions = {
                 }
                 user.id = newUser.id;
                 user.username = newUser.username;
+                user.isAdmin = false;
                 return true;
             }
-            user.id = existingUser?.id || ""
-            user.username = existingUser?.username || ""
+            user.id = existingUser?.id || "";
+            user.username = existingUser?.username || "";
+            user.isAdmin = existingUser.isAdmin;
             return true;
 
         } catch(error){
@@ -96,6 +99,7 @@ export const authOptions = {
         if(user){
             token.id = user.id;
             token.username = user.username;
+            token.isAdmin = user.isAdmin;
         }
         return token;
     },
@@ -103,6 +107,7 @@ export const authOptions = {
         if(session.user){
             session.user.id = token.id;
             session.user.username = token.username
+            session.user.isAdmin = token.isAdmin
         }
         return session;
     }

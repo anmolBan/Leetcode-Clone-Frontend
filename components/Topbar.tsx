@@ -11,7 +11,7 @@ export const Topbar = () => {
             <div className="w-4/5 bg-black min-h-56 p-5">
                 <div className="w-fit">
                     <Link href="/">
-                        <Image alt="logo" src="/logo.png" className="max-w-56"/>
+                        <Image width={150} height={50} alt="logo" src="/logo.png"/>
                     </Link>
                 </div>
                 <div className="flex justify-between">
