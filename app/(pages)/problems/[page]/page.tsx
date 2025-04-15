@@ -10,8 +10,8 @@ export default async function Problems({params} : {params: Promise<{page: string
     return (
         <div>
             <Topbar/>
-            <div className="flex flex-col items-center font-mono bg-gray-100">
-                <div className="w-4/5 mt-2 mb-2 h-screen bg-white">
+            <div className="flex flex-col items-center font-mono min-h-screen bg-gray-100">
+                <div className="w-4/5 mt-2 mb-2 bg-white min-h-screen">
                     <div>
                         <ProblemList page={page}/>
                     </div>

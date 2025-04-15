@@ -41,6 +41,7 @@ model Problem {
   testCases           TestCases[]
   solvedBy            SolvedProblem[]
   codeDraft           CodeDraft[]
+  codeTemplate        CodeTemplate[]
 }
 
 model Submission {
@@ -92,6 +93,14 @@ model CodeDraft {
   updatedAt DateTime @updatedAt
 
   @@unique([problemId, userId])
+}
+
+model CodeTemplate {
+  id        String    @id @default(uuid())
+  code      String
+  language  Language
+  problemId String
+  problem   Problem @relation(fields: [problemId], references: [id])
 }
 
 enum Difficulty {

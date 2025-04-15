@@ -14,6 +14,7 @@ export default async function CreateProblem({
     difficulty: "EASY" | "MEDIUM" | "HARD";
     tags: string[];
     testCases: { input: {}; output: {} }[];
+    codeTemplate: string | undefined;
   };
 }) {
   const CreateProblemSchema = zod.object({
@@ -68,7 +69,7 @@ export default async function CreateProblem({
                 },
             },
         })
-    });
+      });
 
       // Step 3: Create test cases in bulk
       if (problemData.testCases.length > 0) {
@@ -80,6 +81,15 @@ export default async function CreateProblem({
           })),
         });
       }
+
+      await tx.codeTemplate.create({
+        data: {
+          code: problemData.codeTemplate || "",
+          language: "JAVASCRIPT",
+          problemId: problem.id
+        }
+      });
+
     });
 
     return {

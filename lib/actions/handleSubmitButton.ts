@@ -11,9 +11,9 @@ export async function handleSubmitButton({userId, code, problemId} : {userId: st
             code,
             language: "JAVASCRIPT"
         });
-        if(res.data.success){
-            handleSubmission()
-        }
+        // if(res.data.success){
+        //     handleSubmission()
+        // }
         return res.data;
     } catch(error){
         return error;

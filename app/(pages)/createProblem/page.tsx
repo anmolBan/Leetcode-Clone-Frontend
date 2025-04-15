@@ -7,6 +7,14 @@ import { useRouter } from "next/navigation"
 import CreateProblem from "@/lib/actions/createProblem"
 import { Topbar } from "@/components/Topbar"
 
+import { useEditor, EditorContent } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import Underline from "@tiptap/extension-underline"
+import Link from "@tiptap/extension-link"
+import Image from "@tiptap/extension-image"
+import { Extension } from "@tiptap/core"
+import MonacoEditor from "@monaco-editor/react";
+
 // Match the schema enums
 enum Difficulty {
   EASY = "EASY",
@@ -19,6 +27,21 @@ type TestCase = {
   input: any // Any valid JSON
   output: any // Any valid JSON
 }
+
+// Create a custom extension to handle Enter key presses
+const HardBreakOnEnter = Extension.create({
+  name: "hardBreakOnEnter",
+
+  addKeyboardShortcuts() {
+    return {
+      Enter: ({ editor }) => {
+        // Insert a hard break (BR tag) instead of a new paragraph
+        editor.commands.setHardBreak()
+        return true
+      },
+    }
+  },
+})
 
 export default function AddProblemPage() {
   const router = useRouter()
@@ -42,8 +65,51 @@ export default function AddProblemPage() {
   const [testCaseInputs, setTestCaseInputs] = useState<string[]>([JSON.stringify({}, null, 2)])
   const [testCaseOutputs, setTestCaseOutputs] = useState<string[]>([JSON.stringify({}, null, 2)])
 
+  const [codeTemplate, setCodeTemplate] = useState<string | undefined>("");
+
   const [currentTag, setCurrentTag] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // TipTap editor setup
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        codeBlock: false, // Disable code block from StarterKit
+      }),
+      Underline,
+      Link.configure({
+        openOnClick: false,
+      }),
+      Image,
+      HardBreakOnEnter, // Add our custom extension
+    ],
+    content: formData.problemStatement,
+    onUpdate: ({ editor }) => {
+      setFormData((prev) => ({ ...prev, problemStatement: editor.getHTML() }))
+    },
+    editorProps: {
+      attributes: {
+        class: "prose prose-sm sm:prose max-w-none focus:outline-none min-h-[200px] px-4 py-2",
+      },
+      // Custom paste handler to strip formatting
+      handlePaste: (view, event, slice) => {
+        // If it's plain text, let TipTap handle it normally
+        const text = event.clipboardData?.getData("text/plain")
+        if (text) {
+          // Insert plain text at the current position
+          const { state } = view
+          const tr = state.tr.insertText(text, state.selection.from, state.selection.to)
+          view.dispatch(tr)
+          return true // Prevent default paste behavior
+        }
+        return false // Let TipTap handle other types of content
+      },
+    },
+    // Add this to preserve whitespace
+    parseOptions: {
+      preserveWhitespace: "full",
+    },
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -97,7 +163,7 @@ export default function AddProblemPage() {
       setTestCases(updatedTestCases)
     } catch (error) {
       // If JSON is invalid, just update the string but don't update the test case object
-      console.log(error || "There was an unexpected error");
+      console.log(error || "There was an unexpected error")
       const updatedInputs = [...testCaseInputs]
       updatedInputs[index] = value
       setTestCaseInputs(updatedInputs)
@@ -150,7 +216,7 @@ export default function AddProblemPage() {
         JSON.parse(testCaseInputs[i])
         JSON.parse(testCaseOutputs[i])
       } catch (e) {
-        console.log(e);
+        console.log(e)
         alert(`Test case #${i + 1} has invalid JSON. Please fix before submitting.`)
         return false
       }
@@ -178,38 +244,20 @@ export default function AddProblemPage() {
       const problemData = {
         ...formData,
         testCases: validTestCases,
+        codeTemplate: codeTemplate
       }
 
-      console.log("Adding problem");
       const response: {
-        message: string,
-        status: number,
-        success: boolean,
+        message: string
+        status: number
+        success: boolean
         error?: any
-      } = await CreateProblem({problemData});
+      } = await CreateProblem({ problemData })
 
-      if(response.success){
-        console.log("Anmol bhai ho gaya");
-      }
-      else{
+      if (response.success) {
+      } else {
         throw new Error(response.error || "Failed to add problem")
       }
-
-      // console.log(response, "Anmol");
-
-      // const response:any = "kill";
-      // return;
-
-      // const response = await fetch("/api/problems", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(problemData),
-      // })
-
-      // if (!response.ok) {
-      //   const errorData = await response.json()
-      //   throw new Error(errorData.error || "Failed to add problem")
-      // }
 
       // Reset form
       setFormData({
@@ -218,10 +266,14 @@ export default function AddProblemPage() {
         points: 100,
         difficulty: Difficulty.MEDIUM,
         tags: [],
-      })
+      });
+      setCodeTemplate("");
       setTestCases([{ input: {}, output: {} }])
       setTestCaseInputs([JSON.stringify({}, null, 2)])
       setTestCaseOutputs([JSON.stringify({}, null, 2)])
+
+      // Reset editor content
+      editor?.commands.setContent("")
 
       alert("Problem added successfully!")
       // Redirect to problems list
@@ -236,7 +288,7 @@ export default function AddProblemPage() {
 
   return (
     <div>
-      <Topbar/>
+      <Topbar />
       <div className="w-full bg-zinc-100">
         <div className="container py-10 max-w-3xl mx-auto">
           <div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -267,16 +319,199 @@ export default function AddProblemPage() {
                   <label htmlFor="problemStatement" className="block text-sm font-medium text-gray-700">
                     Problem Statement
                   </label>
-                  <textarea
-                    id="problemStatement"
-                    name="problemStatement"
-                    value={formData.problemStatement}
-                    onChange={handleChange}
-                    placeholder="Describe the problem in detail, including constraints..."
-                    rows={6}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                  <div className="border border-gray-300 rounded-md overflow-hidden">
+                    {/* Editor Menu */}
+                    <div className="flex flex-wrap gap-1 p-2 border-b border-gray-200 bg-gray-50">
+                      <button
+                        type="button"
+                        onClick={() => editor?.chain().focus().toggleBold().run()}
+                        className={`px-2 py-1 rounded ${editor?.isActive("bold") ? "bg-gray-200" : "hover:bg-gray-200"}`}
+                        title="Bold"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+                          <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => editor?.chain().focus().toggleItalic().run()}
+                        className={`px-2 py-1 rounded ${editor?.isActive("italic") ? "bg-gray-200" : "hover:bg-gray-200"}`}
+                        title="Italic"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <line x1="19" y1="4" x2="10" y2="4"></line>
+                          <line x1="14" y1="20" x2="5" y2="20"></line>
+                          <line x1="15" y1="4" x2="9" y2="20"></line>
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => editor?.chain().focus().toggleUnderline().run()}
+                        className={`px-2 py-1 rounded ${editor?.isActive("underline") ? "bg-gray-200" : "hover:bg-gray-200"}`}
+                        title="Underline"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"></path>
+                          <line x1="4" y1="21" x2="20" y2="21"></line>
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
+                        className={`px-2 py-1 rounded ${editor?.isActive("heading", { level: 2 }) ? "bg-gray-200" : "hover:bg-gray-200"}`}
+                        title="Heading"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M6 12h12"></path>
+                          <path d="M6 4v16"></path>
+                          <path d="M18 4v16"></path>
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => editor?.chain().focus().toggleBulletList().run()}
+                        className={`px-2 py-1 rounded ${editor?.isActive("bulletList") ? "bg-gray-200" : "hover:bg-gray-200"}`}
+                        title="Bullet List"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <line x1="8" y1="6" x2="21" y2="6"></line>
+                          <line x1="8" y1="12" x2="21" y2="12"></line>
+                          <line x1="8" y1="18" x2="21" y2="18"></line>
+                          <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                          <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                          <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+                        className={`px-2 py-1 rounded ${editor?.isActive("orderedList") ? "bg-gray-200" : "hover:bg-gray-200"}`}
+                        title="Ordered List"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <line x1="10" y1="6" x2="21" y2="6"></line>
+                          <line x1="10" y1="12" x2="21" y2="12"></line>
+                          <line x1="10" y1="18" x2="21" y2="18"></line>
+                          <path d="M4 6h1v4"></path>
+                          <path d="M4 10h2"></path>
+                          <path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path>
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => editor?.chain().focus().toggleBlockquote().run()}
+                        className={`px-2 py-1 rounded ${editor?.isActive("blockquote") ? "bg-gray-200" : "hover:bg-gray-200"}`}
+                        title="Blockquote"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                      </button>
+                      {/* Add a dedicated line break button */}
+                      <button
+                        type="button"
+                        onClick={() => editor?.chain().focus().setHardBreak().run()}
+                        className="px-2 py-1 rounded hover:bg-gray-200"
+                        title="Line Break"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M21 8H3"></path>
+                          <path d="M21 16H3"></path>
+                          <path d="M3 8v8"></path>
+                          <path d="M21 8v8"></path>
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Editor Content */}
+                    <div className="editor-container">
+                      <EditorContent editor={editor} />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Format your problem statement with rich text formatting options. Press Enter for a line break.
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -394,7 +629,10 @@ export default function AddProblemPage() {
                       </div>
                       <div className="grid gap-4">
                         <div className="space-y-2">
-                          <label htmlFor={`testCase-${index}-input`} className="block text-sm font-medium text-gray-700">
+                          <label
+                            htmlFor={`testCase-${index}-input`}
+                            className="block text-sm font-medium text-gray-700"
+                          >
                             Input (JSON format)
                           </label>
                           <textarea
@@ -411,7 +649,10 @@ export default function AddProblemPage() {
                           </p>
                         </div>
                         <div className="space-y-2">
-                          <label htmlFor={`testCase-${index}-output`} className="block text-sm font-medium text-gray-700">
+                          <label
+                            htmlFor={`testCase-${index}-output`}
+                            className="block text-sm font-medium text-gray-700"
+                          >
                             Expected Output (JSON format)
                           </label>
                           <textarea
@@ -430,6 +671,26 @@ export default function AddProblemPage() {
                       </div>
                     </div>
                   ))}
+                  <div>
+                    <label htmlFor="code-template" className="block text-sm font-medium mb-2 text-gray-700">
+                      Code Template
+                    </label>
+                    <MonacoEditor
+                      height="80vh"
+                      defaultLanguage="javascript"
+                      value={codeTemplate}
+                      theme="vs-dark"
+                      options={{
+                        fontSize: 14,
+                        minimap: { enabled: false },
+                        scrollBeyondLastLine: false,
+                        automaticLayout: true,
+                      }}
+                      onChange={(value: string | undefined) => {
+                        setCodeTemplate(value);
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -456,4 +717,3 @@ export default function AddProblemPage() {
     </div>
   )
 }
-

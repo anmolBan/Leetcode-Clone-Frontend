@@ -1,11 +1,5 @@
 import prisma from "../db";
 
-// interface ExamplesType{
-//     input: string;
-//     output: string;
-//     explanation?: string;
-// }
-
 export async function getProblemData({problemTitleOrId} : {problemTitleOrId: string}){
     try{
         const res = await prisma.problem.findFirst({
@@ -16,29 +10,14 @@ export async function getProblemData({problemTitleOrId} : {problemTitleOrId: str
                 ]
             }
         });
-
-        // let problemId;
-        // if(res){
-        //     problemId = res.id;
-        // }
-
-        // const res2 = await prisma.problemExample.findMany({
-        //     where: {
-        //         problemId
-        //     }
-        // });
-
+        
         if(res){
-            // const examples : ExamplesType[] = [];
+            let res2 = await prisma.codeTemplate.findFirst({
+                where: {
+                    problemId: res.id
+                }
+            });
 
-            // res2.map((example) => {
-            //     const curr = {
-            //         input: example.input || "",
-            //         output: example.output || "",
-            //         explanation: example.explanation || ""
-            //     }
-            //     examples.push(curr);
-            // });
 
             return {
                 success: true,
@@ -47,7 +26,8 @@ export async function getProblemData({problemTitleOrId} : {problemTitleOrId: str
                     title: res.title,
                     problemStatement: res.problemStatement,
                     points: res.points,
-                    difficulty: res.difficulty
+                    difficulty: res.difficulty,
+                    codeTemplate: res2?.code || "No code template has been found."
                 },
                 message: "Problem found"
             }
