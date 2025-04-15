@@ -12,7 +12,7 @@ export async function getProblemData({problemTitleOrId} : {problemTitleOrId: str
         });
         
         if(res){
-            let res2 = await prisma.codeTemplate.findFirst({
+            const res2 = await prisma.codeTemplate.findFirst({
                 where: {
                     problemId: res.id
                 }

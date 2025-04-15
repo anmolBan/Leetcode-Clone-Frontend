@@ -92,7 +92,7 @@ export default function AddProblemPage() {
         class: "prose prose-sm sm:prose max-w-none focus:outline-none min-h-[200px] px-4 py-2",
       },
       // Custom paste handler to strip formatting
-      handlePaste: (view, event, slice) => {
+      handlePaste: (view, event) => {
         // If it's plain text, let TipTap handle it normally
         const text = event.clipboardData?.getData("text/plain")
         if (text) {

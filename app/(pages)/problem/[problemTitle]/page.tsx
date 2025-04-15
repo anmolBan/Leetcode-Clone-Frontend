@@ -46,10 +46,7 @@ export default async function Problem({ params }: { params: Promise<{ problemTit
     return;
   }
 
-  let codeData: string = (data.res?.codeTemplate)?.toString() || "";
-
-  // console.log(codeData);
-  // codeData = JSON.parse(`"${codeData}"`);
+  const codeData: string = (data.res?.codeTemplate)?.toString() || "";
 
 
   return (
