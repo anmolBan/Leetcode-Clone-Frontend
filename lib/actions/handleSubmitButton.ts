@@ -5,6 +5,7 @@ import axios from "axios";
 export async function handleSubmitButton({userId, code, problemId} : {userId: string, code: string, problemId: string}){
 
     try{
+        console.log(process.env.CODE_JUDGE_URL);
         const res: any = await axios.post(`${process.env.CODE_JUDGE_URL}/submit-code`, {
             userId,
             problemId,
