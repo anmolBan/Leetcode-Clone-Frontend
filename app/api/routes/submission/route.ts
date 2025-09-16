@@ -32,12 +32,15 @@ export async function POST(req: NextRequest){
         let status;
         if(body.status === "ACCEPTED"){
             status = "ACCEPTED"
+            console.log("Accepted")
         }
         else if(body.status === "WRONG_ANSWER"){
             status = "WRONG_ANSWER"
+            console.log("Wrong Answer")
         }
         else if(body.status === "TLE"){
             status = "TIME_LIMIT_EXCEEDED"
+            console.log("TLE")
         }
         else{
             status = body.status;
